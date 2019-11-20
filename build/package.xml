@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<umbPackage>
+    <files>
+       <!-- GitHub Actions build will add file/s here during the build process -->
+    </files>
+    <info>
+        <package>
+            <name>Take Out The Trash</name>
+            <version><!-- GitHub Actions build will add version here during the build process --></version>
+            <license url="https://umbraco.com/license">Umbraco Commercial License</license>
+            <url>https://umbraco.com/products/umbraco-forms/</url>
+            <requirements type="strict">
+                <major>8</major>
+                <minor>0</minor>
+                <patch>0</patch>
+            </requirements>
+        </package>
+        <author>
+            <name>Warren Buckley</name>
+            <website>https://creativewebspecialist.co.uk</website>
+        </author>
+        <readme>
+          <![CDATA[
+            <h1>Take Out the Trash</h1>
+          ]]>
+        </readme>
+    </info>
+
+    <DocumentTypes />
+    <Templates />
+    <Stylesheets />
+    <Macros />
+    <DictionaryItems />
+    <Languages />
+    <DataTypes />
+    <Actions />
+    
+</umbPackage>
