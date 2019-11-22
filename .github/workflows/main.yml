@@ -1,0 +1,67 @@
+# Umbraco Magical Build Pipeline
+# Worry less about build stuff and code more...
+#
+# 1. Ensure Secret Store has 'UMB_API_KEY' for pushing the ZIP package to our.umbraco.com
+
+name: Magical Build
+on:
+  push:
+    branches:
+      - master                          # Push events on master branch.
+
+jobs:
+  unicorn-dust:                         # Name of Job
+    runs-on: windows-latest             # Make sure we run this on a Windows VM/image
+    env:
+      PKG_VERSION: '1.3.2'              # UPDATE ME
+    steps:
+      - uses: actions/checkout@master   # Go & fetch the REPO & do a git checkout
+
+      - uses: actions/setup-dotnet@v1   # Downloads & adds dotnet to PATH
+        with:
+          dotnet-version: '2.2.103'     # SDK Version to use
+
+      - name: dotnet test               # Run the unit test project inside the SLN
+        working-directory: './src'
+        run: dotnet test
+
+      - name: dotnet pack as Release    # dotnet pack, performs a RESTORE, BUILD & PACK
+        working-directory: src
+        run: dotnet pack --configuration Release -p:PackageVersion=${{ env.PKG_VERSION }} -p:Version=${{ env.PKG_VERSION }} --output ../../output
+
+      - name: Setup Nuget.exe in PATH
+        uses: warrenbuckley/Setup-Nuget@v1
+
+      - name: Nuget Add Source to GitHub Package Repo
+        run: nuget sources Add -Name "GitHub" -Source "https://nuget.pkg.github.com/warrenbuckley/index.json" -UserName warrenbuckley -Password ${{ secrets.GH_NUGET_API_KEY }}
+
+      - name: Nuget SetAPIKey for GitHub Package Repo
+        run: nuget setApiKey ${{ secrets.GITHUB_TOKEN }} -Source "https://nuget.pkg.github.com/warrenbuckley/index.json"
+
+      - name: Nuget Push to GH Nuget Registry
+        working-directory: '../output'
+        run: nuget push *.nupkg -Source "GitHub"
+
+      - name: Copy DLL/s into build.tmp.package folder  # All files/folders in build.tmp.package will be added to Umbraco ZIP package
+        run: xcopy src\TakeOutTheTrash\bin\release\net472\TakeOutTheTrash.dll build.tmp.package\bin\
+
+      - name: Create Umbraco ZIP package
+        uses: warrenbuckley/Create-Umbraco-ZIP-Package@releases/v1
+        with:
+          packageXmlPath: 'build/package.xml'     # The path to the Umbraco Package.xml that we use to build the package
+          packageFilesPath: 'build.tmp.package'   # The path to the folder containing all the files needed for the package, excluding the package.xml (XCOPY is copying them here for us)
+          packageVersion: ${{ env.PKG_VERSION }}  # A version for the Umbraco package such as 1.3.2
+          packageZipOutPath: output               # Name of folder to put the Umbraco package ZIP in
+
+      - name: Get .NET Core Global tool - umbracopackager
+        run: dotnet tool install UmbracoPackage --global --add-source https://www.myget.org/F/umbpackagecli/api/v2/
+
+      - name: Run umbracopackager
+        run: umbracopackage --package="./Take_Out The Trash1.3.2.zip" --key=${{ secrets.UMB_API_KEY }}  #TODO: Umbraco ZIP step needs to give us a path/filename as an output
+        working-directory: output
+
+      - name: Upload output folder as an artifact ZIP (Nupkg & Umb.zip)
+        uses: actions/upload-artifact@master
+        with:
+          name: package-artifacts   # Name of the ZIP
+          path: output              # Name of folder to ZIP up & upload as artifacts
