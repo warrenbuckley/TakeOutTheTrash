@@ -33,7 +33,7 @@ jobs:
         uses: warrenbuckley/Setup-Nuget@v1
 
       - name: Nuget Add Source to GitHub Package Repo
-        run: nuget sources Add -Name "GitHub" -Source "https://nuget.pkg.github.com/warrenbuckley/index.json" -UserName warrenbuckley -Password ${{ secrets.GH_NUGET_API_KEY }}
+        run: nuget sources Add -Name "GitHub" -Source "https://nuget.pkg.github.com/warrenbuckley/index.json" -UserName warrenbuckley -Password ${{ secrets.GITHUB_TOKEN }}
 
       - name: Nuget SetAPIKey for GitHub Package Repo
         run: nuget setApiKey ${{ secrets.GITHUB_TOKEN }} -Source "https://nuget.pkg.github.com/warrenbuckley/index.json"
