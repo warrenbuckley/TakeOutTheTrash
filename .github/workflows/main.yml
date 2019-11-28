@@ -13,7 +13,7 @@ jobs:
   unicorn-dust:                         # Name of Job
     runs-on: windows-latest             # Make sure we run this on a Windows VM/image
     env:
-      PKG_VERSION: '1.5.2'              # UPDATE ME
+      PKG_VERSION: '1.5.3'              # UPDATE ME
     steps:
       - uses: actions/checkout@master   # Go & fetch the REPO & do a git checkout
 
@@ -57,7 +57,7 @@ jobs:
         run: dotnet tool install UmbracoPackage --global --add-source https://www.myget.org/F/umbpackagecli/api/v2/
 
       - name: Run umbracopackager
-        run: umbracopackage --package="./Take_Out The Trash1.3.2.zip" --key=${{ secrets.UMB_API_KEY }}  #TODO: Umbraco ZIP step needs to give us a path/filename as an output
+        run: umbracopackage --package="./Take_Out The Trash1.5.3.zip" --key=${{ secrets.UMB_API_KEY }}  #TODO: Umbraco ZIP step needs to give us a path/filename as an output
         working-directory: output
 
       - name: Upload output folder as an artifact ZIP (Nupkg & Umb.zip)
