@@ -8,7 +8,7 @@
     <Company>Warren Buckley</Company>
     <Description>A package for Umbraco CMS V8+ that automatically empties out the Recycle Bin for you</Description>
     <PackageTags>umbraco umbraco-cms umbraco-8</PackageTags>    
-    <RepositoryUrl>https://github.com/warrenbuckley/Take-Out-The-Trash</RepositoryUrl>
+    <RepositoryUrl>https://github.com/warrenbuckley/TakeOutTheTrash</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
