@@ -13,7 +13,7 @@ jobs:
   unicorn-dust:                         # Name of Job
     runs-on: windows-latest             # Make sure we run this on a Windows VM/image
     env:
-      PKG_VERSION: '1.3.2'              # UPDATE ME
+      PKG_VERSION: '1.5.2'              # UPDATE ME
     steps:
       - uses: actions/checkout@master   # Go & fetch the REPO & do a git checkout
 
