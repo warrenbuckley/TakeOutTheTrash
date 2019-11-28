@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     
-    <PackageId>TakeOutTheTrash.Umbraco</PackageId>
+    <PackageId>Our.Umbraco.TakeOutTheTrash</PackageId>
     <Authors>Warren Buckley</Authors>
     <Company>Warren Buckley</Company>
     <Description>A package for Umbraco CMS V8+ that automatically empties out the Recycle Bin for you</Description>
