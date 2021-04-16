@@ -1,53 +1,57 @@
-﻿using Umbraco.Core;
-using Umbraco.Core.Logging;
-using Umbraco.Core.Services;
-using Umbraco.Core.Sync;
-using Umbraco.Web.Scheduling;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using Umbraco.Cms.Core.Logging;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Sync;
+using Umbraco.Cms.Infrastructure.HostedServices;
+using Umbraco.Extensions;
 
 namespace TakeOutTheTrash
 {
-    public class CleanRoom : RecurringTaskBase
+    public class CleanRoom : RecurringHostedServiceBase
     {
-        private IRuntimeState _runtime;
-        private IProfilingLogger _logger;
-        private IContentService _contentService;
+        private readonly ILogger<CleanRoom> _logger;
+        private readonly IProfilingLogger _profilingLogger;
+        private readonly IContentService _contentService;
+        private readonly IServerRoleAccessor _serverRole;
 
-        public CleanRoom(IBackgroundTaskRunner<RecurringTaskBase> runner, int delayBeforeWeStart, int howOftenWeRepeat, IRuntimeState runtime, IProfilingLogger logger, IContentService contentService)
-            : base(runner, delayBeforeWeStart, howOftenWeRepeat)
+        // TODO: Perhaps show how to use IOptions
+        static TimeSpan howOftenWeRepeat = new TimeSpan(0, 1, 0);
+        static TimeSpan deplayBeforeWeStart = new TimeSpan(0, 1, 0);
+
+        public CleanRoom(ILogger<CleanRoom> logger, IProfilingLogger profilingLogger, IContentService contentService, IServerRoleAccessor serverRole) 
+            : base(howOftenWeRepeat, deplayBeforeWeStart)
         {
-            _runtime = runtime;
             _logger = logger;
+            _profilingLogger = profilingLogger;
             _contentService = contentService;
+            _serverRole = serverRole;
         }
 
-        public override bool PerformRun()
+        public override async Task PerformExecuteAsync(object state)
         {
             // Do not run the code on replicas nor unknown role servers
             // ONLY run for Master server or Single
-            switch (_runtime.ServerRole)
+            switch (_serverRole.CurrentServerRole)
             {
                 case ServerRole.Replica:
-                    _logger.Debug<CleanRoom>("Does not run on replica servers.");
-                    return true; // We return true to try again as the server role may change!
+                    _logger.LogDebug("Does not run on replica servers.");
+                    return;
                 case ServerRole.Unknown:
-                    _logger.Debug<CleanRoom>("Does not run on servers with unknown role.");
-                    return true; // We return true to try again as the server role may change!
+                    _logger.LogDebug("Does not run on servers with unknown role.");
+                    return;
             }
 
             if (_contentService.RecycleBinSmells())
             {
                 // Take out the trash
-                using (_logger.TraceDuration<CleanRoom>("Mum, I am emptying out the bin", "Its all clean now!"))
+                using (_profilingLogger.TraceDuration<CleanRoom>("Mum, I am emptying out the bin", "Its all clean now!"))
                 {
+                    // Pretty dumb example just empties it out whatever is in it
                     _contentService.EmptyRecycleBin(userId: -1);
                 }
             }
-
-            // If we want to keep repeating - we need to return true
-            // But if we run into a problem/error & want to stop repeating - return false
-            return true;
         }
-
-        public override bool IsAsync => false;
     }
 }
