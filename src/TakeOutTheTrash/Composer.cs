@@ -1,14 +1,22 @@
-﻿using Umbraco.Core;
-using Umbraco.Core.Composing;
+﻿using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
 
 namespace TakeOutTheTrash
 {
-    [RuntimeLevel(MinLevel = RuntimeLevel.Run)]
     public class Composer : IUserComposer
     {
-        public void Compose(Composition composition)
+        public void Compose(IUmbracoBuilder builder)
         {
-            composition.Components().Append<Component>();
+            // OLD WAY
+            // composition.Components().Append<Component>();
+
+            // NEW WAY - COMPONENTS ARE BAD SUPPOSEDLY?!
+            //builder.Components().Append<Component>();
+
+
+            // This can be added explicitly to the startup class as well
+            // Not sure I understand why you would do that ?!
+            builder.AddTakeOutTheTrashPackage();
         }
     }
 }
