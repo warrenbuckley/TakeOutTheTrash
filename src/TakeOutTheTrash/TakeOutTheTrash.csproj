@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     
     <PackageId>Our.Umbraco.TakeOutTheTrash</PackageId>
     <Authors>Warren Buckley</Authors>
     <Company>Warren Buckley</Company>
-    <Description>A package for Umbraco CMS V8+ that automatically empties out the Recycle Bin for you</Description>
-    <PackageTags>umbraco umbraco-cms umbraco-8</PackageTags>    
+    <Description>A package for Umbraco CMS V9 (NetCore) that automatically empties out the Recycle Bin for you</Description>
+    <PackageTags>umbraco umbraco-cms umbraco-9</PackageTags>    
     <RepositoryUrl>https://github.com/warrenbuckley/TakeOutTheTrash</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <PackageOutputPath>../output</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UmbracoCms.Web" Version="8.1.2" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.0-alpha004" />
   </ItemGroup>  
 
 </Project>
