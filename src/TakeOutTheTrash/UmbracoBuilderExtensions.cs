@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Umbraco.Cms.Core.DependencyInjection;
 
 namespace TakeOutTheTrash
@@ -18,7 +19,14 @@ namespace TakeOutTheTrash
 
             // BackgroundTasks
             // RecurringHostedServiceBase Background Task stuff is added as HostedService
-            builder.Services.AddHostedService<CleanRoom>();
+
+            // Always check to ensure the collection/services etc do not already contain
+            // what you want to add, in case the .AddTakeOutTheTrashPackage() called from Startup as well
+            // as the Composer appproach in the package auto-plumbing it
+            if (builder.Services.Contains(ServiceDescriptor.Singleton<IHostedService, CleanRoom>()) == false)
+            {
+                builder.Services.AddHostedService<CleanRoom>();
+            }
 
             return builder;
         } 
