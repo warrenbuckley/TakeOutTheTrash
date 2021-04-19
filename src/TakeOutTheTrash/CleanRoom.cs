@@ -15,22 +15,29 @@ namespace TakeOutTheTrash
         private readonly IProfilingLogger _profilingLogger;
         private readonly IContentService _contentService;
         private readonly IServerRoleAccessor _serverRole;
+        private readonly IRuntimeState _runtimeState;
 
         // TODO: Perhaps show how to use IOptions
         static TimeSpan howOftenWeRepeat = new TimeSpan(0, 1, 0);
         static TimeSpan deplayBeforeWeStart = new TimeSpan(0, 1, 0);
 
-        public CleanRoom(ILogger<CleanRoom> logger, IProfilingLogger profilingLogger, IContentService contentService, IServerRoleAccessor serverRole) 
+        public CleanRoom(ILogger<CleanRoom> logger, IProfilingLogger profilingLogger, IContentService contentService, IServerRoleAccessor serverRole, IRuntimeState runtimeState) 
             : base(howOftenWeRepeat, deplayBeforeWeStart)
         {
             _logger = logger;
             _profilingLogger = profilingLogger;
             _contentService = contentService;
             _serverRole = serverRole;
+            _runtimeState = runtimeState;
         }
 
         public override async Task PerformExecuteAsync(object state)
         {
+            // Ensure this code is run when application is set to run
+            // and not Installing, Upgrading etc...
+            if(_runtimeState.Level != Umbraco.Cms.Core.RuntimeLevel.Run)
+                return;
+
             // Do not run the code on replicas nor unknown role servers
             // ONLY run for Master server or Single
             switch (_serverRole.CurrentServerRole)
