@@ -7,9 +7,15 @@ namespace TakeOutTheTrash
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            // This can be added explicitly to the startup class as well
-            // Not sure I understand why you would do that ?!
-            builder.AddTakeOutTheTrashPackage();
+            // Composers are Umbraco specific magic
+            // Useful for packages that use Umbraco ZIPs & want to auto register
+            // If this was just a Nuget package then the user would add AddTakeOutTheTrashPackage() in Startup.cs
+            // to the ConfigureServices() method
+
+            // We are adding the package & setting it to read from the configuration providers
+            // So that AppSettings.json or ENV Variables with 'TakeOutTheTrash' section key
+
+            builder.Services.AddTakeOutTheTrashPackage(builder.Config);
         }
     }
 }

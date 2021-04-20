@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Logging;
@@ -17,16 +18,18 @@ namespace TakeOutTheTrash
         private readonly IServerRoleAccessor _serverRole;
         private readonly IRuntimeState _runtimeState;
 
-        // TODO: Perhaps show how to use IOptions
-        static TimeSpan howOftenWeRepeat = new TimeSpan(0, 1, 0);
-        static TimeSpan deplayBeforeWeStart = new TimeSpan(0, 1, 0);
-
-        public CleanRoom(ILogger<CleanRoom> logger, IProfilingLogger profilingLogger, IContentService contentService, IServerRoleAccessor serverRole, IRuntimeState runtimeState) 
-            : base(howOftenWeRepeat, deplayBeforeWeStart)
+        public CleanRoom(
+            ILogger<CleanRoom> logger, 
+            IProfilingLogger profilingLogger, 
+            IContentService contentService, 
+            IServerRoleAccessor serverRole, 
+            IRuntimeState runtimeState,
+            IOptions<TakeOutTheTrashSettings> trashSettings) 
+            : base(trashSettings.Value.HowOftenWeRepeat, trashSettings.Value.DelayBeforeWeStart)
         {
             _logger = logger;
             _profilingLogger = profilingLogger;
-            _contentService = contentService;
+            _contentService = contentService;   
             _serverRole = serverRole;
             _runtimeState = runtimeState;
         }
